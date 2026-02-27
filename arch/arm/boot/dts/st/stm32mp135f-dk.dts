@@ -55,17 +55,10 @@
 			clock-frequency = <24000000>;
 		};
 	};
-/*
 	memory@c0000000 {
 		device_type = "memory";
-		reg = <0xc0000000 0x20000000>;
+		reg = <0xc0000000 0x10000000>;
 	};
-*/
-memory@c0000000 {
-	device_type = "memory";
-	reg = <0xc0000000 0x10000000>; /* 256MB */
-};
-
 
 	reserved-memory {
 		#address-cells = <1>;
