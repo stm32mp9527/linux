@@ -527,7 +527,7 @@
 	bus-width = <4>;
 	vmmc-supply = <&scmi_vdd_sd>;
 	status = "okay";
-};
+}; 
 
 /*
  * SDMMC2 configuration for eMMC support.
