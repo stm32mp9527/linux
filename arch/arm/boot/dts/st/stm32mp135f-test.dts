@@ -17,7 +17,7 @@
 
 / {
 	model = "STMicroelectronics STM32MP135F-DK Discovery Board";
-	compatible = "st,stm32mp135f-dk", "st,stm32mp135";
+	compatible = "st,stm32mp135f-test", "st,stm32mp135";
 
 	aliases {
 		ethernet0 = &ethernet1;
@@ -247,8 +247,8 @@
 		compatible = "snps,dwmac-mdio";
 
 		phy0_eth1: ethernet-phy@0 {
-			compatible = "ethernet-phy-id0007.c131";
-			reset-gpios =  <&mcp23017 9 GPIO_ACTIVE_LOW>;
+			compatible = "ethernet-phy-id0000.011a";
+			reset-gpios =  <&gpioa 6 GPIO_ACTIVE_LOW>;
 			reset-assert-us = <1000>;
 			reset-deassert-us = <30000>;
 			reg = <0>;
@@ -265,8 +265,8 @@
 	phy-mode = "rmii";
 	max-speed = <100>;
 	phy-handle = <&phy0_eth2>;
-	st,ext-phyclk;
-	phy-supply = <&scmi_v3v3_sw>;
+	//st,ext-phyclk;
+	//phy-supply = <&scmi_v3v3_sw>;
 	nvmem-cells = <&ethernet_mac2_address>;
 	nvmem-cell-names = "mac-address";
 
@@ -275,8 +275,8 @@
 		#size-cells = <0>;
 		compatible = "snps,dwmac-mdio";
 		phy0_eth2: ethernet-phy@0 {
-			compatible = "ethernet-phy-id0007.c131";
-			reset-gpios = <&mcp23017 10 GPIO_ACTIVE_LOW>;
+			compatible = "ethernet-phy-id0000.011a";
+			reset-gpios = <&gpioa 11 GPIO_ACTIVE_LOW>;
 			reset-assert-us = <1000>;
 			reset-deassert-us = <30000>;
 			reg = <0>;
