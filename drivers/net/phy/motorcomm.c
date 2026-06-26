@@ -17,6 +17,7 @@
 #define PHY_ID_YT8531		0x4f51e91b
 #define PHY_ID_YT8531S		0x4f51e91a
 
+
 /* YT8521/YT8531S Register Overview
  *	UTP Register space	|	FIBER Register space
  *  ------------------------------------------------------------
@@ -964,6 +965,8 @@ static int yt8521_probe(struct phy_device *phydev)
 	u32 freq;
 	int ret;
 
+	phydev_warn(phydev, "enter yt8521_probe!!!\n");
+
 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
 	if (!priv)
 		return -ENOMEM;
@@ -1575,9 +1578,13 @@ static int yt8521_config_init(struct phy_device *phydev)
 	int old_page;
 	int ret = 0;
 
+	phydev_warn(phydev,"step0\n" );
+
 	old_page = phy_select_page(phydev, YT8521_RSSR_UTP_SPACE);
 	if (old_page < 0)
 		goto err_restore_page;
+
+	phydev_warn(phydev,"step0.1\n" );
 
 	/* set rgmii delay mode */
 	if (phydev->interface != PHY_INTERFACE_MODE_SGMII) {
@@ -1585,6 +1592,9 @@ static int yt8521_config_init(struct phy_device *phydev)
 		if (ret < 0)
 			goto err_restore_page;
 	}
+
+	phydev_warn(phydev,"step1\n" );
+	
 
 	if (of_property_read_bool(node, "motorcomm,auto-sleep-disabled")) {
 		/* disable auto sleep */
@@ -1594,6 +1604,8 @@ static int yt8521_config_init(struct phy_device *phydev)
 			goto err_restore_page;
 	}
 
+	phydev_warn(phydev,"step2\n" );
+
 	if (of_property_read_bool(node, "motorcomm,keep-pll-enabled")) {
 		/* enable RXC clock when no wire plug */
 		ret = ytphy_modify_ext(phydev, YT8521_CLOCK_GATING_REG,
@@ -1601,6 +1613,30 @@ static int yt8521_config_init(struct phy_device *phydev)
 		if (ret < 0)
 			goto err_restore_page;
 	}
+	phydev_warn(phydev,"step3\n" );
+
+	{
+		int bmcr, chip_cfg, rgmii_cfg1, clk_gate, sleep_ctrl, synce_cfg;
+		int bmsr  = __phy_read(phydev, MII_BMSR);     // PHY 状态
+		int physts = __phy_read(phydev, MII_STAT1000); // 1000BASE-T 状态
+		int estatus = __phy_read(phydev, MII_ESTATUS); // 扩展状态
+
+		bmcr = __phy_read(phydev, MII_BMCR);
+		chip_cfg = ytphy_read_ext(phydev, YT8521_CHIP_CONFIG_REG);
+		rgmii_cfg1 = ytphy_read_ext(phydev, YT8521_RGMII_CONFIG1_REG);
+		clk_gate = ytphy_read_ext(phydev, YT8521_CLOCK_GATING_REG);
+		sleep_ctrl = ytphy_read_ext(phydev, YT8521_EXTREG_SLEEP_CONTROL1_REG);
+		synce_cfg = ytphy_read_ext(phydev, YTPHY_SYNCE_CFG_REG);
+		
+		phydev_warn(phydev, "YT8521 regs: BMCR=0x%04x BMSR=0x%04x CHIP=0x%04x RGMII=0x%04x CLK_GATE=0x%04x SLEEP=0x%04x SYNCE=0x%04x STAT1000=0x%04x ESTATUS=0x%04x\n",
+            bmcr, bmsr, chip_cfg, rgmii_cfg1, clk_gate, sleep_ctrl, synce_cfg, physts, estatus);
+	}
+	// {
+	// 	u16 lb_val = BMCR_LOOPBACK | BMCR_SPEED100 | BMCR_FULLDPLX;
+
+	// 	__phy_write(phydev, MII_BMCR, lb_val);
+	// 	phydev_warn(phydev, "PHY loopback ENABLED (0x%04x), self-ping test now\n", lb_val);
+	// }
 err_restore_page:
 	return phy_restore_page(phydev, old_page, ret);
 }
