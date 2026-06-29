@@ -80,12 +80,7 @@
 
 	gpio-keys {
 		compatible = "gpio-keys";
-
-		button-user {
-			label = "User-PA13";
-			linux,code = <BTN_1>;
-			gpios = <&gpioa 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-		};
+		
         button-wakeup {
 			label = "wake-up";
 			linux,code = <KEY_WAKEUP>;
@@ -242,7 +237,15 @@
 
 		phy0_eth1: ethernet-phy@0 {
 			compatible = "ethernet-phy-id0000.011a", "ethernet-phy-ieee802.3-c22";
+<<<<<<< Updated upstream
 			motorcomm,clk-out-frequency-hz = <125000000>;
+=======
+
+			//motorcomm,clk-out-frequency-hz = <125000000>;
+			motorcomm,clk-out-frequency-hz = <0>;
+			motorcomm,keep-pll-enabled;
+			motorcomm,auto-sleep-disabled;
+>>>>>>> Stashed changes
 			reset-gpios =  <&gpioa 6 GPIO_ACTIVE_LOW>;
 			reset-assert-us = <1000>;
 			reset-deassert-us = <30000>;
@@ -253,7 +256,7 @@
 };
 
 &ethernet2 {
-	status = "okay";
+	status = "disabled";
 	pinctrl-0 = <&eth2_pins_mx>;
 	pinctrl-1 = <&eth2_sleep_pins_mx>;
 	pinctrl-names = "default", "sleep";
@@ -271,7 +274,13 @@
 		phy0_eth2: ethernet-phy@0 {
 			compatible = "ethernet-phy-id0000.011a", "ethernet-phy-ieee802.3-c22";
 			motorcomm,clk-out-frequency-hz = <125000000>;
+<<<<<<< Updated upstream
 			reset-gpios = <&gpioa 11 GPIO_ACTIVE_LOW>;
+=======
+			motorcomm,keep-pll-enabled;
+			motorcomm,auto-sleep-disabled;
+			reset-gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
+>>>>>>> Stashed changes
 			reset-assert-us = <1000>;
 			reset-deassert-us = <30000>;
 			reg = <0>;
