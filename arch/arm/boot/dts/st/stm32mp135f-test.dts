@@ -153,10 +153,7 @@
 		regulator-always-on;
 	};
 
-	wifi_pwrseq: wifi-pwrseq {
-		compatible = "mmc-pwrseq-simple";
-		reset-gpios = <&mcp23017 11 GPIO_ACTIVE_LOW>;
-	};
+	/* wifi_pwrseq removed */
 };
 
 &adc_1 {
@@ -198,7 +195,8 @@
 };
 
 &dcmipp {
-	status = "okay";
+	/* status = "okay"; -- 板子无摄像头，禁用 DCMIPP 释放 PD11 给 ETH2 */
+	status = "disabled";
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&dcmipp_pins_a>;
 	pinctrl-1 = <&dcmipp_sleep_pins_a>;
@@ -237,7 +235,6 @@
 
 		phy0_eth1: ethernet-phy@0 {
 			compatible = "ethernet-phy-id0000.011a", "ethernet-phy-ieee802.3-c22";
-			//motorcomm,clk-out-frequency-hz = <125000000>;
 			motorcomm,clk-out-frequency-hz = <0>;
 			motorcomm,keep-pll-enabled;
 			motorcomm,auto-sleep-disabled;
@@ -261,14 +258,12 @@
 	st,ext-phyclk;
 	nvmem-cells = <&ethernet_mac2_address>;
 	nvmem-cell-names = "mac-address";
-
 	mdio {
 		#address-cells = <1>;
 		#size-cells = <0>;
 		compatible = "snps,dwmac-mdio";
 		phy0_eth2: ethernet-phy@0 {
 			compatible = "ethernet-phy-id0000.011a", "ethernet-phy-ieee802.3-c22";
-			//motorcomm,clk-out-frequency-hz = <125000000>;
 			motorcomm,clk-out-frequency-hz = <0>;
 			motorcomm,keep-pll-enabled;
 			motorcomm,auto-sleep-disabled;
@@ -420,10 +415,10 @@
 
 &ltdc {
 	pinctrl-names = "default", "sleep";
-	pinctrl-0 = <&ltdc_pins_a>;
-	pinctrl-1 = <&ltdc_sleep_pins_a>;
+	pinctrl-0 = <&ltdc_pins_mx>;
+	pinctrl-1 = <&ltdc_sleep_pins_mx>;
 	default-on;
-	status = "okay";
+	status = "disabled";
 
 	port {
 		ltdc_out_rgb: endpoint {
