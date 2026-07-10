@@ -251,7 +251,7 @@
 		pins {
 			pinmux = <STM32_PINMUX('A', 8, ANALOG)>, /* ETH2_RXD3 */
 					 <STM32_PINMUX('B', 2, ANALOG)>, /* ETH2_MDIO */
-					 <STM32_PINMUX('D', 11, ANALOG)>, /* ETH2_CLK125 */
+					 //<STM32_PINMUX('D', 11, ANALOG)>, /* ETH2_CLK125 */
 					 <STM32_PINMUX('E', 2, ANALOG)>, /* ETH2_RXD1 */
 					 <STM32_PINMUX('E', 6, ANALOG)>, /* ETH2_TXD3 */
 					 <STM32_PINMUX('F', 4, ANALOG)>, /* ETH2_RXD0 */

@@ -34,12 +34,12 @@
 		#size-cells = <1>;
 		ranges;
 
-		framebuffer {
-			compatible = "simple-framebuffer";
-			clocks = <&rcc LTDC_PX>;
-			lcd-supply =  <&scmi_v3v3_sw>;
-			status = "disabled";
-		};
+		//framebuffer {
+			//compatible = "simple-framebuffer";
+			//clocks = <&rcc LTDC_PX>;
+			//lcd-supply =  <&scmi_v3v3_sw>;
+			//status = "disabled";
+		//};
 	};
 
 	clocks {
@@ -102,12 +102,12 @@
 	};
 
 	panel_backlight: panel-backlight {
+		status = "disabled";
 		compatible = "pwm-backlight";
 		pwms = <&pwm1 2 1000000 PWM_POLARITY_INVERTED>;
 		brightness-levels = <0 16 22 30 40 55 75 102 138 188 255>;
 		default-brightness-level = <10>;
 		power-supply = <&scmi_v3v3_sw>;
-		status = "okay";
 	};
 
 	panel_rgb: panel-rgb {
@@ -117,7 +117,7 @@
 		power-supply = <&scmi_v3v3_sw>;
 		data-mapping = "bgr666";
 		default-on;
-		status = "okay";
+		status = "disabled";
 
 		width-mm = <105>;
 		height-mm = <67>;
@@ -145,6 +145,19 @@
 		};
 	};
 
+	hdmi: connector {
+		compatible = "hdmi-connector";
+		label = "hdmi";
+		type = "a";
+
+		port {
+			hdmi_connector_in: endpoint {
+				remote-endpoint = <&sii9022_out>;
+			};
+		};
+	};
+
+
 	v3v3_ao: v3v3-ao {
 		compatible = "regulator-fixed";
 		regulator-name = "v3v3_ao";
@@ -152,6 +165,23 @@
 		regulator-max-microvolt = <3300000>;
 		regulator-always-on;
 	};
+
+	v3v3_hdmi: v3v3-hdmi {
+		compatible = "regulator-fixed";
+		regulator-name = "v3v3_hdmi";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+	};
+
+	v1v2_hdmi: v1v2-hdmi {
+		compatible = "regulator-fixed";
+		regulator-name = "v1v2_hdmi";
+		regulator-min-microvolt = <1200000>;
+		regulator-max-microvolt = <1200000>;
+		regulator-always-on;
+	};
+
 
 	/* wifi_pwrseq removed */
 };
@@ -302,6 +332,40 @@
 		microchip,irq-mirror;
 	};
 
+	hdmi-transmitter@39 {
+		compatible = "sil,sii9022";
+		reg = <0x39>;
+		iovcc-supply = <&v3v3_hdmi>;
+		cvcc12-supply = <&v1v2_hdmi>;
+		reset-gpios = <&gpioi 2 GPIO_ACTIVE_LOW>;
+		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
+		interrupt-parent = <&gpioi>;
+		pinctrl-names = "default", "sleep";
+		pinctrl-0 = <&sii902x_pins_a>;
+		pinctrl-1 = <&sii902x_sleep_pins_a>;
+		status = "okay";
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+				sii9022_in: endpoint {
+					remote-endpoint = <&ltdc_out_rgb>;
+				};
+			};
+
+			port@1 {
+				reg = <1>;
+				sii9022_out: endpoint {
+					remote-endpoint = <&hdmi_connector_in>;
+				};
+			};
+		};
+	};
+	};
+
 	/*typec@53 {
 		compatible = "st,stm32g0-typec";
 		reg = <0x53>;
@@ -320,7 +384,6 @@
 			};
 		};
 	};*/
-};
 
 &i2c5 {
 	pinctrl-names = "default", "sleep";
@@ -329,7 +392,7 @@
 	i2c-scl-rising-time-ns = <170>;
 	i2c-scl-falling-time-ns = <5>;
 	clock-frequency = <400000>;
-	status = "okay";
+	status = "disabled";
 	/* spare dmas for other usage */
 	/delete-property/dmas;
 	/delete-property/dma-names;
@@ -418,11 +481,11 @@
 	pinctrl-0 = <&ltdc_pins_mx>;
 	pinctrl-1 = <&ltdc_sleep_pins_mx>;
 	default-on;
-	status = "disabled";
+	status = "okay";
 
 	port {
 		ltdc_out_rgb: endpoint {
-			remote-endpoint = <&panel_in_rgb>;
+			remote-endpoint = <&sii9022_in>;
 		};
 	};
 };
