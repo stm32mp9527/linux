@@ -185,6 +185,14 @@
 		regulator-boot-on;
 	};
 
+	vdd_usb: vdd-usb {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_usb";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+	};
+
 
 	/* wifi_pwrseq removed */
 };
@@ -714,14 +722,14 @@
 &usbh_ehci {
 	phys = <&usbphyc_port0>;
 	status = "okay";
-	#address-cells = <1>;
-	#size-cells = <0>;
+	//#address-cells = <1>;
+	//#size-cells = <0>;
 	/* onboard HUB */
-	hub@1 {
-		compatible = "usb424,2514";
-		reg = <1>;
-		vdd-supply = <&scmi_v3v3_sw>;
-	};
+	//hub@1 {
+	//	compatible = "usb424,2514";
+	//	reg = <1>;
+	//	vdd-supply = <&scmi_v3v3_sw>;
+	//};
 };
 
 &usbotg_hs {
@@ -741,7 +749,7 @@
 };
 
 &usbphyc_port0 {
-	phy-supply = <&scmi_vdd_usb>;
+	phy-supply = <&vdd_usb>;
 	st,current-boost-microamp = <1000>;
 	st,decrease-hs-slew-rate;
 	st,tune-hs-dc-level = <2>;
@@ -755,7 +763,7 @@
 };
 
 &usbphyc_port1 {
-	phy-supply = <&scmi_vdd_usb>;
+	phy-supply = <&vdd_usb>;
 	st,current-boost-microamp = <1000>;
 	st,decrease-hs-slew-rate;
 	st,tune-hs-dc-level = <2>;
