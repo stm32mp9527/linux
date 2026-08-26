@@ -55,29 +55,22 @@
 			clock-frequency = <24000000>;
 		};
 	};
-      memory@c0000000 {
-              device_type = "memory";
-              reg = <0xc0000000 0x10000000>;
-       };
- 
-       reserved-memory {
-               #address-cells = <1>;
-               #size-cells = <1>;
-               ranges;
-              
-             /*  optee_framebuffer@cd000000 {
-                       reg = <0xcd000000 0x01000000>;
-                       no-map;
-               };*/
-			   
-               /* OP-TEE改为了 0x00800000*/
-               optee@cf800000 {
-                       reg = <0xcf800000 0x00800000>;
-                       no-map;
-               };
-    };
 
+	memory@c0000000 {
+		device_type = "memory";
+		reg = <0xc0000000 0x20000000>;
+	};
 
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		optee@dd000000 {
+			reg = <0xdd000000 0x3000000>;
+			no-map;
+		};
+	};
 
 	gpio-keys {
 		compatible = "gpio-keys";
@@ -87,13 +80,7 @@
 			linux,code = <BTN_1>;
 			gpios = <&gpioa 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 		};
-        button-user2 {
-            label = "User-PA14";
-            linux,code = <BTN_2>;
-            gpios = <&gpioa 14 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-        };
 
- 
 		button-wakeup {
 			label = "wake-up";
 			linux,code = <KEY_WAKEUP>;
@@ -103,7 +90,7 @@
 
 	leds {
 		compatible = "gpio-leds";
-       /*
+
 		led-blue {
 			function = LED_FUNCTION_HEARTBEAT;
 			color = <LED_COLOR_ID_BLUE>;
@@ -111,7 +98,6 @@
 			linux,default-trigger = "heartbeat";
 			default-state = "off";
 		};
-		*/
 	};
 
 	panel_backlight: panel-backlight {
@@ -336,10 +322,10 @@
 		microchip,irq-mirror;
 	};
 
-	/*typec@53 {
+	typec@53 {
 		compatible = "st,stm32g0-typec";
 		reg = <0x53>;
-		/* Alert pin on PI2 (PWR wakeup pin), managed by optee *//*
+		/* Alert pin on PI2 (PWR wakeup pin), managed by optee */
 		interrupts-extended = <&optee 1>;
 		firmware-name = "stm32g0-ucsi.mp135f-dk.fw";
 		wakeup-source;
@@ -353,7 +339,7 @@
 				};
 			};
 		};
-	};*/
+	};
 };
 
 &i2c5 {
@@ -527,23 +513,29 @@
 	bus-width = <4>;
 	vmmc-supply = <&scmi_vdd_sd>;
 	status = "okay";
-}; 
+};
 
-/*
- * SDMMC2 configuration for eMMC support.
- * Original SDMMC1 configuration is inherited from parent DTSI files.
- */
+/* Wifi */
 &sdmmc2 {
 	pinctrl-names = "default", "opendrain", "sleep";
 	pinctrl-0 = <&sdmmc2_b4_pins_a &sdmmc2_clk_pins_a>;
 	pinctrl-1 = <&sdmmc2_b4_od_pins_a &sdmmc2_clk_pins_a>;
 	pinctrl-2 = <&sdmmc2_b4_sleep_pins_a>;
 	non-removable;
+	cap-power-off-card;
+	cap-sdio-irq;
 	st,neg-edge;
-	bus-width = <8>;
-	vmmc-supply = <&scmi_vdd_sd>;
-	vqmmc-supply = <&scmi_v1v8_periph>;
+	bus-width = <4>;
+	vmmc-supply = <&v3v3_ao>;
+	mmc-pwrseq = <&wifi_pwrseq>;
+	#address-cells = <1>;
+	#size-cells = <0>;
 	status = "okay";
+
+	brcmf: bcrmf@1 {
+		reg = <1>;
+		compatible = "brcm,bcm4329-fmac";
+	};
 };
 
 &spi5 {
@@ -720,13 +712,13 @@
 &usbotg_hs {
 	phys = <&usbphyc_port1 0>;
 	phy-names = "usb2-phy";
-	//usb-role-switch;
+	usb-role-switch;
 	status = "okay";
-	//port {
-	//	usbotg_hs_ep: endpoint {
-	//		remote-endpoint = <&con_usb_c_g0_ep>;
-	//	};
-	//};
+	port {
+		usbotg_hs_ep: endpoint {
+			remote-endpoint = <&con_usb_c_g0_ep>;
+		};
+	};
 };
 
 &usbphyc {
